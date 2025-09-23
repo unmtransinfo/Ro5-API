@@ -15,9 +15,11 @@ docker compose -f compose-development.yml up --build
 ```
 ---
 ## Example request
+Ethanol:
 ```bash
 curl -s -X POST http://localhost:8000/ro5 -H "Content-Type: application/json" -d '{"smiles":"CCO","vmax":1}' | jq
 ```
+Aspirin:
 ```bash
 curl -s -X POST http://localhost:8000/ro5 -H "Content-Type: application/json" -d '{"smiles":"CC(=O)OC1=CC=CC=C1C(=O)O","vmax":1}' | jq
 ```
