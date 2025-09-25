@@ -2,3 +2,4 @@ flask
 flasgger
 gunicorn
 rdkit
+flask_cors

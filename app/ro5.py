@@ -3,6 +3,8 @@ from rdkit import Chem
 from rdkit.Chem import Descriptors, Lipinski
 from rdkit.Chem import Crippen
 
+from flask import jsonify
+
 # https://rdkit.org/docs/api-docs.html
 
 
@@ -18,7 +20,7 @@ def ro5_compute(smiles: str):
     #LogP - predicted octanol-water partition coefficient ; LogP < 5.0
     mol = Chem.MolFromSmiles(smiles)
     if mol is None:
-        return jsonify({"smiles": smiles, "error": "Invalid SMILES"}), 400
+        return {"smiles": smiles, "error": "Invalid SMILES"}
 
     
     mwt = Descriptors.MolWt(mol)

@@ -6,9 +6,11 @@ from ro5 import ro5_compute
 from flask import jsonify
 from flask import request
 
+from flask_cors import CORS
+
 app = Flask(__name__)
 Swagger(app)
-
+CORS(app)
 
 #test
 @app.get("/htest")
