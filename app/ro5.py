@@ -28,6 +28,13 @@ def ro5_compute(smiles: str):
     hba = int(Lipinski.NumHAcceptors(mol))
     logp = Crippen.MolLogP(mol)
 
+
+    # violation checks
+    mwt_violation = mwt > 500
+    hbd_violation = hbd > 5
+    hba_violation = hba > 10
+    logp_violation = logp >= 5.0
+
     
 
     violations = sum ([mwt>500,hbd>5, hba>10, logp>=5.0])
@@ -39,5 +46,9 @@ def ro5_compute(smiles: str):
         "hba": hba,
         "logp": round(logp, 3),
         "violations": int(violations),
+        "mwt_violation": mwt_violation,
+        "hbd_violation": hbd_violation,
+        "hba_violation": hba_violation,
+        "logp_violation": logp_violation,
     }
 

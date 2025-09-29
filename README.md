@@ -23,3 +23,7 @@ Aspirin:
 ```bash
 curl -s -X POST http://localhost:8000/ro5 -H "Content-Type: application/json" -d '{"smiles":"CC(=O)OC1=CC=CC=C1C(=O)O","vmax":1}' | jq
 ```
+Caffeine:
+```bash
+curl -s -X POST http://localhost:8000/ro5 -H "Content-Type: application/json" -d '{"smiles":"CN1C(=O)N(C)C(=O)C(N(C)C=N2)=C12","vmax":1}' | jq
+```

@@ -8,6 +8,9 @@ from flask import request
 
 from flask_cors import CORS
 
+
+import statistics
+
 app = Flask(__name__)
 Swagger(app)
 CORS(app)
@@ -17,6 +20,52 @@ CORS(app)
 def health():
     """Test check."""
     return {"status": "good"}
+
+
+def compute_summary(items):
+  valid = [i for i in items if "error" not in i]
+  n = len(valid)
+
+  def vals(key):
+    return [i[key] for i in valid]
+
+  def stats(v):
+    #if 0
+    if len(v) == 0:
+       return {"n": 0, "mean": None, "stdev": None}
+    #if 1
+    if len(v) == 1:
+       return {"n": 1, "mean": round(v[0], 3), "stdev": 0.0}
+    #ekse
+    return {
+        "n": len(v),
+         "mean": round(statistics.mean(v), 3),
+        "stdev": round(statistics.stdev(v), 3),
+    }
+
+
+  #pass and fail stuff
+  pass_count = sum(1 for i in valid if i.get("passes_ro5"))
+  fail_count = n - pass_count
+  def pct(k): 
+    if n:
+      return round(100.0 * k / n, 2)
+    else:
+      return None
+
+
+  #final return
+  return {
+      "mwt":  stats(vals("mwt")),
+      "logp": stats(vals("logp")),
+      "hbd":  stats(vals("hbd")),
+      "hba":  stats(vals("hba")),
+      "pass_fail": {
+            "n": n,
+            "pass": {"count": pass_count, "pct": pct(pass_count)},
+            "fail": {"count": fail_count, "pct": pct(fail_count)},
+        },
+  }
 
 #ethanol: CCO
 #curl -s -X POST http://localhost:8000/ro5 -H "Content-Type: application/json" -d '{"smiles":"CCO","vmax":1}' | jq
@@ -60,7 +109,9 @@ def ro5_res():
             r["vmax"] = vmax
             r["passes_ro5"] = r["violations"] <= vmax
         items.append(r)
-    return jsonify({"items": items})
+    
+    summary = compute_summary(items)
+    return jsonify({"items": items, "summary": summary})
 
 
     
