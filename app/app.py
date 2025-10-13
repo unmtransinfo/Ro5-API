@@ -13,11 +13,11 @@ import statistics
 import math
 
 import io, csv, base64
+import os
 
-
-RENDER_LIMIT = 20 #5000
+RENDER_LIMIT = 1 #5000
 #works but just shows in console.log. not in page.
-REJECT_LIMIT = 10000 
+REJECT_LIMIT = 100 
 
 app = Flask(__name__)
 Swagger(app)
@@ -26,8 +26,8 @@ CORS(app)
 #test
 @app.get("/htest")
 def health():
-    """Test check."""
-    return {"status": "good"}
+  """Test check."""
+  return {"status": "good"}
 
 
 #helper func FOR box/histogram
@@ -166,54 +166,54 @@ def compute_summary(items):
 #curl -s -X POST http://localhost:8000/ro5 -H "Content-Type: application/json" -d '{"smiles":"CC(=O)OC1=CC=CC=C1C(=O)O","vmax":1}' | jq
 @app.post("/ro5")
 def ro5_res():
-    """
-    Lipinski rule of Five
-    ---
-    parameters:
-      - in: body
-        name: body
-        schema:
-          type: object
-          properties:
-            smiles:
-              type: array
-              items: {type: string}
-        vmax: {type: integer, default: 1}
-    responses:
-      200:
-        description: Ro5 results
-    """
-    data = request.get_json(force=True, silent=True) or {}
+  """
+  Lipinski rule of Five
+  ---
+  parameters:
+    - in: body
+      name: body
+      schema:
+        type: object
+        properties:
+          smiles:
+            type: array
+            items: {type: string}
+      vmax: {type: integer, default: 1}
+  responses:
+    200:
+      description: Ro5 results
+  """
+  data = request.get_json(force=True, silent=True) or {}
 
 
-    smiles_list = data.get("smiles", [])
-    vmax = int(data.get("vmax", 1))
-    items = []
+  smiles_list = data.get("smiles", [])
+  vmax = int(data.get("vmax", 1))
+  items = []
 
-    #if single
-    if isinstance(smiles_list, str):
-        smiles_list = [smiles_list]
-    n_input = len(smiles_list)
-    if n_input >= REJECT_LIMIT:
-      return jsonify({"error": f"Too many stuff: {n_input}. Right now max is {REJECT_LIMIT}"}), 413
+  #if single
+  if isinstance(smiles_list, str):
+    smiles_list = [smiles_list]
+  n_input = len(smiles_list)
+  if n_input >= REJECT_LIMIT:
+    return jsonify({"error": f"Too many stuff: {n_input}. Right now max is {REJECT_LIMIT}"}), 413
 
-    for s in smiles_list:
-        r = ro5_compute(str(s).strip())
-        if "error" not in r:
-            r["vmax"] = vmax
-            r["passes_ro5"] = r["violations"] <= vmax
-        items.append(r)
+  for s in smiles_list:
+      r = ro5_compute(str(s).strip())
+      if "error" not in r:
+          r["vmax"] = vmax
+          r["passes_ro5"] = r["violations"] <= vmax
+      items.append(r)
     
-    summary = compute_summary(items)
+  summary = compute_summary(items)
 
-    res123 = {"items": items, "summary": summary}
+  res123 = {"items": items, "summary": summary}
 
-    if n_input >= RENDER_LIMIT:
-      res123["note"] = "Large dataset. Download sumary only"
-      res123["items"] = []
-      res123["download"] = build_csv(items)
+  if n_input >= RENDER_LIMIT:
+    res123["note"] = "Click the button below to download the summary file."
+    #res123["items"] = []
+    res123["download"] = build_csv(items)
 
-    return jsonify(res123)
+  return jsonify(res123)
 
 
     
@@ -221,5 +221,6 @@ def ro5_res():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+  port = int(os.getenv("APP_PORT", 8000))
+  app.run(host="0.0.0.0", port=port)
 

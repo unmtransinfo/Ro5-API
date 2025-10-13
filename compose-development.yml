@@ -1,7 +1,9 @@
 services:
   ro5:
     build: .
+    env_file:
+      - local.env
     ports:
-      - "8000:8000"
+      - "${HOST_PORT:-8000}:${APP_PORT:-8000}"
     volumes:
       - ./app:/app
