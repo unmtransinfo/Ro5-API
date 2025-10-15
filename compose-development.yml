@@ -1,6 +1,8 @@
 services:
   ro5:
-    build: .
+    build:
+      context: .
+      dockerfile: app/Dockerfile
     env_file:
       - local.env
     ports:
