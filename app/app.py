@@ -19,8 +19,25 @@ RENDER_LIMIT = 1 #5000
 #works but just shows in console.log. not in page.
 REJECT_LIMIT = 100 
 
+
+swagger_config = {
+  "headers": [],
+  "specs": [
+    {
+      "endpoint": "apispec_1",
+      "route": "/apispec_1.json",
+      "rule_filter": lambda rule: True, 
+      "model_filter": lambda tag: True}
+  ],
+  "static_url_path": "/flasgger_static",
+  "swagger_ui": True,
+  "specs_route": "/apidocs/"
+}
+
+
+
 app = Flask(__name__)
-Swagger(app)
+Swagger(app, config=swagger_config)
 CORS(app)
 
 #test
