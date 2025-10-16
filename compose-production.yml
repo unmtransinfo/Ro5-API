@@ -2,7 +2,7 @@ services:
   ro5_api:
     restart: always
     build:
-      context: ./Ro5-API
+      context: .
       dockerfile: app/Dockerfile
     environment:
       - APP_PORT=${APP_PORT}
