@@ -34,8 +34,8 @@ services:
       - static_files_flasgger:/usr/share/nginx/html/static_files_flasgger:ro
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - nginx:/etc/nginx
-#    ports:
-#      - "80:80"
+    ports:
+      - "8080:80"
     depends_on:
       ro5_api:
         condition: service_started
