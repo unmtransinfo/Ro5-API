@@ -1,0 +1,53 @@
+services:
+  ro5_api:
+    restart: always
+    build:
+      context: ./Ro5-API
+      dockerfile: app/Dockerfile
+    environment:
+      - APP_PORT=${APP_PORT}
+    env_file:
+      - .env
+    volumes:
+      - static_files_flasgger:/app/flasgger_static/
+    networks:
+      - ro5_net
+
+  ro5_ui:
+    build:
+      context: https://github.com/unmtransinfo/Ro5-UI.git#main
+    environment:
+      - NODE_OPTIONS=--openssl-legacy-provider
+    env_file:
+      - .env
+    command: sh -c "rm -rf node_modules package-lock.json && npm install && npx vite build"
+    volumes:
+      - static_files_smartsfilter:/app/dist/
+    networks:
+      - ro5_net
+
+  ro5_nginx:
+    restart: always
+    image: nginx:1
+    volumes:
+      - static_files_smartsfilter:/usr/share/nginx/html/static_files_smartsfilter:ro
+      - static_files_flasgger:/usr/share/nginx/html/static_files_flasgger:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - nginx:/etc/nginx
+    ports:
+      - "80:80"
+    depends_on:
+      ro5_api:
+        condition: service_started
+      ro5_ui:
+        condition: service_started
+    networks:
+      - ro5_net
+
+volumes:
+  static_files_smartsfilter:
+  static_files_flasgger:
+  nginx:
+
+networks:
+  ro5_net:
