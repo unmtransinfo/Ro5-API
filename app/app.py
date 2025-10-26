@@ -19,6 +19,9 @@ RENDER_LIMIT = 1 #5000
 #works but just shows in console.log. not in page.
 REJECT_LIMIT = 100 
 
+#new
+URL_PREFIX = os.getenv("URL_PREFIX", "").strip("/")
+API_BASE = f"/{URL_PREFIX}/api" if URL_PREFIX else "/api"
 
 swagger_config = {
   "headers": [],
@@ -41,7 +44,7 @@ Swagger(app, config=swagger_config)
 CORS(app)
 
 #test
-@app.get("/htest")
+@app.get(f"{API_BASE}/htest")
 def health():
   """Test check."""
   return {"status": "good"}
@@ -181,7 +184,7 @@ def compute_summary(items):
 
 #aspirin: CC(=O)OC1=CC=CC=C1C(=O)O
 #curl -s -X POST http://localhost:8000/ro5 -H "Content-Type: application/json" -d '{"smiles":"CC(=O)OC1=CC=CC=C1C(=O)O","vmax":1}' | jq
-@app.post("/ro5")
+@app.post(f"{API_BASE}/ro5")
 def ro5_res():
   """
   Lipinski rule of Five
