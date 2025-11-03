@@ -17,7 +17,7 @@ import os
 
 RENDER_LIMIT = 1 #5000
 #works but just shows in console.log. not in page.
-REJECT_LIMIT = 100 
+REJECT_LIMIT = 200 
 
 #new
 URL_PREFIX = os.getenv("URL_PREFIX", "").strip("/")
@@ -104,7 +104,9 @@ def box(values):
 #for csv builder(double check later)
 def build_csv(items):
   headers = [
-        "smiles","mwt","logp","hbd","hba","violations","passes_ro5","vmax",
+        "smiles",
+        "name",
+        "mwt","logp","hbd","hba","violations","passes_ro5","vmax",
         "mwt_violation","hbd_violation","hba_violation","logp_violation","error"
     ]
 
@@ -207,21 +209,30 @@ def ro5_res():
 
 
   smiles_list = data.get("smiles", [])
+  names_list = data.get("names", [])
+
   vmax = int(data.get("vmax", 1))
   items = []
 
   #if single
   if isinstance(smiles_list, str):
     smiles_list = [smiles_list]
+  if isinstance(names_list, str):
+    names_list = [names_list]
+  
   n_input = len(smiles_list)
   if n_input >= REJECT_LIMIT:
     return jsonify({"error": f"Too many stuff: {n_input}. Right now max is {REJECT_LIMIT}"}), 413
 
-  for s in smiles_list:
+  for idx, s in enumerate(smiles_list):
       r = ro5_compute(str(s).strip())
       if "error" not in r:
           r["vmax"] = vmax
           r["passes_ro5"] = r["violations"] <= vmax
+      ##attach name if provided
+      if idx < len(names_list) and names_list[idx]:
+        r["name"] = names_list[idx].strip()
+
       items.append(r)
     
   summary = compute_summary(items)
