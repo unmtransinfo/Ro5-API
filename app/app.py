@@ -17,7 +17,7 @@ import os
 
 RENDER_LIMIT = 1 #5000
 #works but just shows in console.log. not in page.
-REJECT_LIMIT = 200 
+REJECT_LIMIT = 1500 
 
 #new
 URL_PREFIX = os.getenv("URL_PREFIX", "").strip("/")
