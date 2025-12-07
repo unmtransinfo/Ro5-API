@@ -222,7 +222,7 @@ def ro5_res():
   
   n_input = len(smiles_list)
   if n_input >= REJECT_LIMIT:
-    return jsonify({"error": f"Too many stuff: {n_input}. Right now max is {REJECT_LIMIT}"}), 413
+    return jsonify({"error": f"Too many compounds provided: {n_input}. Current max is {REJECT_LIMIT}"}), 413
 
   for idx, s in enumerate(smiles_list):
       r = ro5_compute(str(s).strip())
