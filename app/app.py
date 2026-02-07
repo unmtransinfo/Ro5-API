@@ -25,6 +25,7 @@ API_BASE = f"/{URL_PREFIX}/api" if URL_PREFIX else "/api"
 IN_PROD = app.config.get("FLASK_ENV", "") == "production"
 print("IN_PROD value:", IN_PROD)
 
+prefix = os.getenv("SWAGGER_PREFIX", "").rstrip("/")
 # Configure swagger config 
 swagger_config = {
   "headers": [],
@@ -38,9 +39,7 @@ swagger_config = {
   "static_url_path": "/flasgger_static",
   "swagger_ui": True,
   "specs_route": "/apidocs/",
-  "ui_params": {
-      "url_prefix": "/ro5" if IN_PROD else "",
-  }
+  "ui_params": {"url_prefix": prefix},
 }
 
 
