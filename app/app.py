@@ -16,13 +16,18 @@ import io, csv, base64
 import os
 
 RENDER_LIMIT = 1 #5000
-#works but just shows in console.log. not in page.
 REJECT_LIMIT = 1500 
 
-#new
+app = Flask(__name__)
+
+# Load
 URL_PREFIX = os.getenv("URL_PREFIX", "").strip("/")
 API_BASE = f"/{URL_PREFIX}/api" if URL_PREFIX else "/api"
 
+IN_PROD = app.config.get("FLASK_ENV", "") == "production"
+print("IN_PROD value:", IN_PROD)
+
+# Configure swagger config 
 swagger_config = {
   "headers": [],
   "specs": [
@@ -34,12 +39,15 @@ swagger_config = {
   ],
   "static_url_path": "/flasgger_static",
   "swagger_ui": True,
-  "specs_route": "/apidocs/"
+  "specs_route": "/apidocs/",
+  "ui_params": {
+      "url_prefix": "/ro5" if IN_PROD else "",
+  }
 }
 
 
 
-app = Flask(__name__)
+
 Swagger(app, config=swagger_config)
 CORS(app)
 
