@@ -7,12 +7,27 @@ Built with Flask, documented with Swagger (`/apidocs`), and containerized with D
 ## Requirements
 - Docker
 - Docker Compose
+---
+## Documentation 
+The `/apidocs/` page provides detailed information for all available API endpoints.
+
+- **Production:** https://chiltepin.health.unm.edu/ro5/apidocs/
+- **Local:** http://localhost:8000/apidocs/
+
+**UI Repository**: [Ro5-UI](https://github.com/unmtransinfo/Ro5-UI)
 
 ---
-## Start the service
-```bash
-docker compose -f compose-development.yml up --build
-```
+## Setup (Development)
+1. Clone the repository
+   ```bash
+   git clone https://github.com/unmtransinfo/Ro5-API
+   ```
+2. cd Ro5-API
+3. Start the development environment
+    ```bash
+    docker compose -f compose-development.yml up --build
+    ```
+
 ---
 ## Example request
 Ethanol:
