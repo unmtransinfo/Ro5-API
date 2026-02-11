@@ -36,10 +36,11 @@ swagger_config = {
       "rule_filter": lambda rule: True, 
       "model_filter": lambda tag: True}
   ],
-  "static_url_path": "/flasgger_static",
+  "static_url_path": f"{prefix}/flasgger_static",
   "swagger_ui": True,
   "specs_route": "/apidocs/",
   "ui_params": {"url_prefix": prefix},
+  "basePath": f"/{prefix.lstrip('/')}",
 }
 
 
