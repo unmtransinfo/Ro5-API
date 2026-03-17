@@ -11,6 +11,7 @@ services:
       - static_files_flasgger:/app/flasgger_static/
     ports:
       - "127.0.0.1:${APP_PORT:-8002}:${APP_PORT:-8002}"
+    command: gunicorn --bind "0.0.0.0:${APP_PORT}" --preload app:app
     networks:
       - ro5_net
 

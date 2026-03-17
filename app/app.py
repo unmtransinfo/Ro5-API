@@ -20,7 +20,7 @@ app = Flask(__name__)
 
 # Load
 URL_PREFIX = os.getenv("URL_PREFIX", "").strip("/")
-API_BASE = f"/{URL_PREFIX}/api" if URL_PREFIX else "/api"
+API_BASE="/api"
 
 IN_PROD = app.config.get("FLASK_ENV", "") == "production"
 print("IN_PROD value:", IN_PROD)
