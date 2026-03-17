@@ -18,13 +18,11 @@ services:
     restart: "no"
     build:
       context: https://github.com/unmtransinfo/Ro5-UI.git#deploy-prod-16
-    environment:
-      - NODE_OPTIONS=--openssl-legacy-provider
     env_file:
       - .env
     command: sh -c "npm install && npx vite build && mkdir -p /app/dist-out && cp -r dist/. /app/dist-out/"
     volumes:
-      - ./ro5-ui-dist:/app/dist-out
+      - /var/www/ro5:/app/dist-out
     networks:
       - ro5_net
 
