@@ -1,6 +1,6 @@
 services:
   ro5_api:
-    restart: always
+    restart: unless-stopped
     build:
       context: ./app
     environment:
@@ -9,45 +9,26 @@ services:
       - .env
     volumes:
       - static_files_flasgger:/app/flasgger_static/
+    ports:
+      - "127.0.0.1:${APP_PORT:-8002}:${APP_PORT:-8002}"
+    command: gunicorn --bind "0.0.0.0:${APP_PORT}" --preload app:app
     networks:
       - ro5_net
 
   ro5_ui:
+    restart: "no"
     build:
-      context: https://github.com/unmtransinfo/Ro5-UI.git#deploy-prod-5
-    environment:
-      - NODE_OPTIONS=--openssl-legacy-provider
+      context: https://github.com/unmtransinfo/Ro5-UI.git#deploy-prod-16
     env_file:
       - .env
-    command: sh -c "rm -rf node_modules package-lock.json && npm install && npx vite build"
+    command: sh -c "npm install && npx vite build && mkdir -p /app/dist-out && cp -r dist/. /app/dist-out/"
     volumes:
-      - static_files_ro5:/app/dist/
-    networks:
-      - ro5_net
-
-  ro5_nginx:
-    restart: always
-    image: nginx:1
-    volumes:
-      - static_files_ro5:/usr/share/nginx/html/static_files_ro5:ro
-      - static_files_flasgger:/usr/share/nginx/html/static_files_flasgger:ro
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - nginx:/etc/nginx
-    ports:
-      - "${RO5_NGINX_SSL_PORT:-443}:443"
-      - "${RO5_NGINX_HTTP_PORT:-80}:80"
-    depends_on:
-      ro5_api:
-        condition: service_started
-      ro5_ui:
-        condition: service_started
+      - /var/www/ro5:/app/dist-out
     networks:
       - ro5_net
 
 volumes:
-  static_files_ro5:
   static_files_flasgger:
-  nginx:
 
 networks:
   ro5_net:
